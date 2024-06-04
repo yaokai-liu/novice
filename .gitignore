@@ -1,0 +1,16 @@
+build
+cmake-build-*
+*64/csrc
+*64/tests
+*64/cmake-build
+output
+.vscode
+*/extlib
+artifact
+exec
+extlib
+extinc
+.idea
+.vs
+.gdbinit
+googletest
