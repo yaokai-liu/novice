@@ -1,0 +1,62 @@
+
+# workflow for x86_64
+
+name: CI
+
+on:
+  push:
+    branches: [ "liu" ]
+    paths:
+      - 'x86_64/*'
+      - 'tests/*'
+      - 'csrc/*'
+      - 'include/*'
+      - 'CMakeLists.txt'
+      - '.github/workflows/liu-x86_64.yml'
+  pull_request:
+    branches: [ "liu" ]
+    paths:
+      - 'x86_64/*'
+      - 'tests/*'
+      - 'csrc/*'
+      - 'include/*'
+      - 'CMakeLists.txt'
+      - '.github/workflows/liu-x86_64.yml'
+
+  workflow_dispatch:
+
+jobs:
+  build-x86_64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install Development Packages
+        run: |
+          sudo apt-get update --upgrade
+          sudo apt-get install -y make cmake
+          sudo apt-get install -y gcc-11 g++-11
+          sudo apt-get install -y qemu-user
+
+      - name: Fetch Google Test
+        run: |
+          cd ~ && git clone https://github.com/google/googletest.git --depth 1
+
+      - name: Build Google Test
+        env:
+          BUILD_OPTIONS: -DCMAKE_C_COMPILER=x86_64-linux-gnu-gcc-11 -DCMAKE_CXX_COMPILER=x86_64-linux-gnu-g++-11
+        run: |
+          cd ~
+          cmake ${{ env.BUILD_OPTIONS }} -S googletest -B cmake-build-gtest
+          cmake --build cmake-build-gtest  --target all -j 10
+          sudo cmake --install cmake-build-gtest --prefix /usr/x86_64-linux-gnu
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Novice
+        run: |
+          cmake -DCMAKE_MAKE_PROGRAM=/usr/bin/make -G 'CodeBlocks - Unix Makefiles' -DTARGET=x86_64 -S . -B cmake-build-target
+          cmake --build cmake-build-target  --target test-x86_64 -j 10
+
+      - name: Test Novice
+        run: |
+          qemu-x86_64 output/test-x86_64
