@@ -9,13 +9,15 @@ _qsort:
 #   _qsort(void *, size_t, size_t, int (*)(const void *, const void *)) {
     .cfi_startproc
 
-#   if (_count < 1 || _ele_size < 1) { return ; }
+#   if (!_nums || _count < 1 || _ele_size < 1 || !_fn_cmp) { return ; }
     cmp     $0,     %rdi
-    je      _qsort.ret_directly 
+    je      _qsort.ret_directly
     cmp     $1,     %rsi
     jle     _qsort.ret_directly
     cmp     $1,     %rdx
     jl      _qsort.ret_directly
+    cmp     $0,     %rcx
+    je      _qsort.ret_directly
 
     pushq   %r12
     pushq   %r13
@@ -41,23 +43,21 @@ _qsort:
     add     %rdi,   %rax
     movq    %rax,   %r13    #   right = %r13
 
-    movq    %rdi,   -0x08(%rbp)     # push lower_bound
-    movq    %rsi,   -0x10(%rbp)     # push _count
-    movq    %rax,   -0x18(%rbp)     # push upper_bound
-    movq    %rcx,   -0x20(%rbp)     # push _fn_cmp
+    movq    %rdi,   0x00(%rsp)     # push lower_bound
+    movq    %rax,   0x08(%rsp)     # push upper_bound
+    movq    %rcx,   0x10(%rsp)     # push _fn_cmp
 
 #   char * base = (char *)alloca(_ele_size);
-    movq    -0x10(%rbp),    %rax
+    movq    %r15,   %rax
     subq    $1,     %rax
     shrq    $4,     %rax
     addq    $1,     %rax
     shlq    $4,     %rax
-    movq    %rax,   -0x28(%rbp)     # push ((_ele_size - 1) / 16) * 16
-    sub     %rax,   %rsp
-    movq    %rsp,   %r14    # base = %r14
+    movq    %rsp,   %r14           # store sp
+    sub     %rax,   %rsp           # base = %rsp
 
 #   memcpy(base, left, _ele_ssize);
-    movq    %r14,   %rdi
+    movq    %rsp,   %rdi
     movq    %r12,   %rsi
     movq    %r15,   %rdx
     call    memcpy
@@ -68,8 +68,8 @@ _qsort.L0:
     cmp     %r13,   %r12
     jge     _qsort.L0_end
     movq    %r13,   %rdi
-    movq    %r14,   %rsi
-    movq    -0x20(%rbp),    %rcx
+    movq    %rsp,   %rsi
+    movq    0x10(%r14),    %rcx
     call    *%rcx
     test    %eax, %eax
     jl      _qsort.L0_end
@@ -87,7 +87,7 @@ _qsort.L0_end:
     movq    %r15,    %rdx
     call    memcpy
 #   left += _ele_size;
-    addq    %r15,   %r12
+    addq    %r15,    %r12
 #   }
 
 #   while (left < right && _fn_cmp(left, base) <= 0) {
@@ -95,8 +95,8 @@ _qsort.L1:
     cmp     %r13,   %r12
     jge     _qsort.L1_end
     movq    %r12,   %rdi
-    movq    %r14,   %rsi
-    movq    -0x20(%rbp),    %rcx
+    movq    %rsp,   %rsi
+    movq    0x10(%r14),    %rcx
     call    *%rcx
     test    %eax, %eax
     jg      _qsort.L1_end
@@ -123,33 +123,35 @@ _qsort.L1_end:
 _qsort.tail:
 #   memcpy(right, base, _ele_size);
     movq    %r13,   %rdi
-    movq    %r14,   %rsi
+    movq    %rsp,   %rsi
     movq    %r15,   %rdx
     call    memcpy
 
 #   cqsort(_nums, (left - lower_bound) / _ele_size, _ele_size, _fn_cmp);
-    movq    -0x08(%rbp),    %rdi
+    movq    0x00(%r14),    %rdi
     movq    %r12,   %rax
     subq    %rdi,   %rax
     xorq    %rdx,   %rdx
     divq    %r15
     movq    %rax,   %rsi
     movq    %r15,   %rdx
-    movq    -0x20(%rbp),    %rcx
+    movq    0x10(%r14),    %rcx
     call    _qsort
 
 #   cqsort(right + _ele_size, (upper_bound - right) / _ele_size, _ele_size, _fn_cmp);
     movq    %r13,   %rdi
     addq    %r15,   %rdi
-    movq    -0x18(%rbp),    %rax
+    movq    0x08(%r14),    %rax
     subq    %r13,   %rax
     xorq    %rdx,   %rdx
     divq    %r15
     movq    %rax,   %rsi
     movq    %r15,   %rdx
-    movq    -0x20(%rbp),   %rcx
+    movq    0x10(%r14),   %rcx
     call    _qsort
 
+    movq    %r14,   %rsp
+    addq    $0x40,  %rsp
     movq    %rbp,   %rsp
     popq    %rbp
     popq    %r15
