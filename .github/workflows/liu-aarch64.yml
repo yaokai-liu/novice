@@ -5,7 +5,7 @@ name: CI
 
 on:
   push:
-    branches: [ "liu" ]
+    branches: [ "liu", "liu-aarch64" ]
     paths:
       - 'aarch64/*'
       - 'tests/*'
@@ -14,7 +14,7 @@ on:
       - 'CMakeLists.txt'
       - '.github/workflows/liu-aarch64.yml'
   pull_request:
-    branches: [ "liu" ]
+    branches: [ "liu", "liu-aarch64" ]
     paths:
       - 'aarch64/*'
       - 'tests/*'
