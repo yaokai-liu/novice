@@ -1,7 +1,3 @@
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include "functions.h"
 
 void cswap(void * a, void * b, size_t _size) {
@@ -55,7 +51,3 @@ void cqsort(void * const _nums, size_t _count, size_t _ele_size, int (*_fn_cmp)(
     cqsort(right + _ele_size, (upper_bound - right) / _ele_size, _ele_size, _fn_cmp);
 }
 
-
-#ifdef __cplusplus
-}
-#endif
