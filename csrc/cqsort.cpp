@@ -1,43 +1,15 @@
 #include "functions.h"
 
 void cswap(void * a, void * b, size_t _size) {
-    uint64_t *a64, *b64;
-    a64 = reinterpret_cast<uint64_t *>(a);
-    b64 = reinterpret_cast<uint64_t *>(b);
-    while (_size >= sizeof(uint64_t)) {
-        uint64_t tmp = *a64;
-        *a64 = *b64;
-        *b64 = tmp;
-        a64 ++; b64 ++;
-        _size -= sizeof(uint64_t);
+    uint8_t *a8, *b8;
+    a8 = static_cast<uint8_t *>(a);
+    b8 = static_cast<uint8_t *>(b);
+    for (size_t i = 0; i < _size; i++) {
+        uint8_t tmp = a8[i];
+        a8[i] = b8[i];
+        b8[i] = tmp;
     }
-    uint32_t *a32 = reinterpret_cast<uint32_t *>(a64);
-    uint32_t *b32 = reinterpret_cast<uint32_t *>(a64);
-    while (_size >= sizeof(uint32_t)) {
-        uint32_t tmp = *a32;
-        *a32 = *b32;
-        *b32 = tmp;
-        a32 ++; b32 ++;
-        _size -= sizeof(uint32_t);
-    }
-    uint16_t *a16 = reinterpret_cast<uint16_t *>(a32);
-    uint16_t *b16 = reinterpret_cast<uint16_t *>(b32);
-    while (_size >= sizeof(uint16_t)) {
-        uint16_t tmp = *a16;
-        *a16 = *b16;
-        *b16 = tmp;
-        a16 ++; b16 ++;
-        _size -= sizeof(uint16_t);
-    }
-    uint8_t *a8 = reinterpret_cast<uint8_t *>(a16);
-    uint8_t *b8 = reinterpret_cast<uint8_t *>(b16);
-    while (_size >= sizeof(uint8_t)) {
-        uint8_t tmp = *a8;
-        *a8 = *b8;
-        *b8 = tmp;
-        a8 ++; b8 ++;
-        _size -= sizeof(uint8_t);
-    }
+    return ;
 }
 
 void cqsort(void * const _nums, size_t _count, size_t _ele_size, int (*_fn_cmp)(const void *, const void *)) {
