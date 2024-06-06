@@ -58,14 +58,14 @@ TEST(TestQuickSortConstInt64Array, TestQuickSort) {
     free(buffer3);
 }
 
-TEST(TestQuickSortReservedInt64Array, TestQuickSort) {
+TEST(TestQuickSortReverseInt64Array, TestQuickSort) {
     auto * buffer1 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
     auto * buffer2 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
     auto * buffer3 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
 
     srandom(time(nullptr));
     int8_t shift = (int8_t) random() % 64;
-    for (int i = 0; i < BUFFER_LEN; i++){ buffer1[i] = BUFFER_LEN - i; buffer1[i] << shift; }
+    for (int i = 0; i < BUFFER_LEN; i++){ buffer1[i] = BUFFER_LEN - i; buffer1[i] <<= shift; }
     memcpy(buffer2, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
     memcpy(buffer3, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
 
@@ -131,14 +131,14 @@ TEST(TestQuickSortConstInt32Array, TestQuickSort) {
     free(buffer3);
 }
 
-TEST(TestQuickSortReservedInt32Array, TestQuickSort) {
+TEST(TestQuickSortReverseInt32Array, TestQuickSort) {
     auto * buffer1 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
     auto * buffer2 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
     auto * buffer3 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
 
     srandom(time(nullptr));
     int8_t shift = (int8_t) random() % 32;
-    for (int i = 0; i < BUFFER_LEN; i++){ buffer1[i] = BUFFER_LEN - i; buffer1[i] << shift; }
+    for (int i = 0; i < BUFFER_LEN; i++){ buffer1[i] = BUFFER_LEN - i; buffer1[i] <<= shift; }
     memcpy(buffer2, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
     memcpy(buffer3, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
 
