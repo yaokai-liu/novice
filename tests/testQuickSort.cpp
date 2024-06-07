@@ -14,6 +14,27 @@ int cmp64(const void *a, const void *b) {
     return *(int64_t *)a > *(int64_t *)b ? 1 : -1;
 }
 
+TEST(TestQuickSortOrderedInt64Array, TestQuickSort) {
+    auto * buffer1 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
+    auto * buffer2 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
+    auto * buffer3 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
+
+    srandom(time(nullptr));
+    for (int i = 0; i < BUFFER_LEN; i++){ buffer1[i] = i ; }
+    memcpy(buffer2, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
+    memcpy(buffer3, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
+
+    sqsort(buffer1, BUFFER_LEN, sizeof(ELE_TYPE), cmp64);
+    cqsort(buffer2, BUFFER_LEN, sizeof(ELE_TYPE), cmp64);
+    _qsort(buffer3, BUFFER_LEN, sizeof(ELE_TYPE), cmp64);
+    EXPECT_EQ(memcmp(buffer2, buffer1, BUFFER_LEN), 0);
+    EXPECT_EQ(memcmp(buffer3, buffer1, BUFFER_LEN), 0);
+
+    free(buffer1);
+    free(buffer2);
+    free(buffer3);
+}
+
 TEST(TestQuickSortRandomInt64Array, TestQuickSort) {
     auto * buffer1 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
     auto * buffer2 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
@@ -85,6 +106,28 @@ TEST(TestQuickSortReverseInt64Array, TestQuickSort) {
 
 int cmp32(const void *a, const void *b) {
     return *(int32_t *)a > *(int32_t *)b ? 1 : -1;
+}
+
+TEST(TestQuickSortOrderedInt32Array, TestQuickSort) {
+    auto * buffer1 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
+    auto * buffer2 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
+    auto * buffer3 = (ELE_TYPE *) malloc(BUFFER_LEN * sizeof(ELE_TYPE));
+
+    srandom(time(nullptr));
+    for (int i = 0; i < BUFFER_LEN; i++){ buffer1[i] = i << (random() % 32); }
+    memcpy(buffer2, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
+    memcpy(buffer3, buffer1, BUFFER_LEN * sizeof(ELE_TYPE));
+
+    sqsort(buffer1, BUFFER_LEN, sizeof(ELE_TYPE), cmp32);
+    cqsort(buffer2, BUFFER_LEN, sizeof(ELE_TYPE), cmp32);
+    _qsort(buffer3, BUFFER_LEN, sizeof(ELE_TYPE), cmp32);
+    EXPECT_EQ(memcmp(buffer2, buffer1, BUFFER_LEN), 0);
+    EXPECT_EQ(memcmp(buffer3, buffer1, BUFFER_LEN), 0);
+
+
+    free(buffer1);
+    free(buffer2);
+    free(buffer3);
 }
 
 TEST(TestQuickSortRandomInt32Array, TestQuickSort) {
