@@ -8,12 +8,12 @@ int64_t sum(const int64_t * p, size_t c) {
 }
 
 TEST(TestGetSum, TestGetSum){
-    int64_t buffer[512];
+    int64_t buffer[512] = {};
 
-    EXPECT_EQ(getSum(buffer, 0), sum(buffer, 0));
-    EXPECT_EQ(getSum(buffer, 1), sum(buffer, 1));
     srandom(time(nullptr));
     for (long & i : buffer){ i = random(); }
+    EXPECT_EQ(getSum(buffer, 0), sum(buffer, 0));
+    EXPECT_EQ(getSum(buffer, 1), sum(buffer, 1));
     EXPECT_EQ(getSum(buffer, 512), sum(buffer, 512));
 
     for (int i = 0; i < 512; i ++) { buffer[i] = i + 1; }
