@@ -29,9 +29,6 @@ TEST(TestQuickSortOrderedInt64Array, TestQuickSort) {
     _qsort(buffer3, BUFFER_LEN, sizeof(ELE_TYPE), cmp64);
     EXPECT_EQ(memcmp(buffer2, buffer1, BUFFER_LEN), 0);
     EXPECT_EQ(memcmp(buffer3, buffer1, BUFFER_LEN), 0);
-    for (int i = 0; i < BUFFER_LEN; i++) {
-        printf("%ld\t%ld\n", buffer1[i], buffer3[i]);
-    }
 
     free(buffer1);
     free(buffer2);
